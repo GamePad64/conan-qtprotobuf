@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+package qtprotobufnamespace.qttypes.tests;
+import "QtProtobuf/Qt.proto";
+
+message QUrlMessage {
+    Qt.QUrl testField = 1;
+}

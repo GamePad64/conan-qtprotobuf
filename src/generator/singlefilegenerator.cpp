@@ -98,6 +98,10 @@ bool SingleFileGenerator::GenerateMessages(const ::google::protobuf::FileDescrip
     externalIncludes.insert("QString");
 
     for (int i = 0; i < file->dependency_count(); i++) {
+        std::cerr << "dependencies: " << file->dependency(i)->name();
+        if (file->dependency(i)->name() == "QtProtobuf/Qt.proto") {
+            continue;
+        }
         internalIncludes.insert(utils::removeFileSuffix(file->dependency(i)->name()) + Templates::ProtoFileSuffix);
     }
 

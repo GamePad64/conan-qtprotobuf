@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package Qt;
+
+message QUrl {
+    string url = 1;
+} 
+
+message QChar {
+    repeated bytes char = 1;
+}
+
+message QUuid {
+    repeated bytes uuid = 1;
+}
+
+message QColor {
+    uint32 r = 1;
+    uint32 g = 2;
+    uint32 b = 3;
+    uint32 a = 4;
+}

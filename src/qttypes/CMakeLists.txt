@@ -1,8 +1,8 @@
-set(TARGET QtProtobufWellKnownTypes)
+set(TARGET QtProtobufQtTypes)
 set(TARGET_EXPORT ${TARGET}Targets)
 set(TARGET_CONFIG ${TARGET}Config)
 
-set(TARGET_INCLUDE_DIR ${CMAKE_INSTALL_INCLUDEDIR}/QtProtobuf/google/protobuf)
+set(TARGET_INCLUDE_DIR ${CMAKE_INSTALL_INCLUDEDIR}/QtProtobuf/Qt)
 set(TARGET_LIB_DIR ${CMAKE_INSTALL_LIBDIR})
 set(TARGET_CMAKE_DIR ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
 set(TARGET_BINDIR ${CMAKE_INSTALL_BINDIR})
@@ -22,26 +22,6 @@ include(${QT_PROTOBUF_CMAKE_DIR}/QtProtobufGen.cmake)
 file(GLOB SOURCES
     dummy.cpp)
 
-function(add_wellknowntype TYPENAME)
-    list(APPEND LOOKUP_DIRS ${QT_PROTOBUF_SOURCE_DIR}/3rdparty/grpc/third_party/protobuf/src)
-    list(APPEND LOOKUP_DIRS ${Protobuf_INCLUDE_DIRS})
-    foreach(INCLUDE_DIR ${LOOKUP_DIRS})
-        file(GLOB PROTO_FILE ${INCLUDE_DIR}/google/protobuf/${TYPENAME}.proto)
-        if (NOT "${PROTO_FILE}" STREQUAL "")
-            message(STATUS "Add well-known type ${PROTO_FILE}")
-            qtprotobuf_generate(TARGET ${TARGET} GENERATED_TARGET ${TYPENAME}
-                OUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/generated
-                PROTO_FILES ${PROTO_FILE}
-                PROTO_INCLUDES "-I\"${INCLUDE_DIR}\""
-                QML FOLDER)
-            target_include_directories(${TYPENAME} PRIVATE
-                $<TARGET_PROPERTY:${QT_PROTOBUF_PROJECT}::QtProtobufWellKnownTypes,INTERFACE_INCLUDE_DIRECTORIES>)
-            get_target_property(GENERATED_PUBLIC_HEADER_PRIVATE ${TYPENAME} PUBLIC_HEADER)
-            set(GENERATED_PUBLIC_HEADER "${GENERATED_PUBLIC_HEADER};${GENERATED_PUBLIC_HEADER_PRIVATE}" PARENT_SCOPE)
-            break()
-        endif()
-    endforeach()
-endfunction()
 
 if(QT_PROTOBUF_STATIC)
     add_library(${TARGET} STATIC ${SOURCES})
@@ -49,26 +29,11 @@ else()
     add_library(${TARGET} SHARED ${SOURCES})
 endif()
 
-add_wellknowntype(any)
-add_wellknowntype(duration)
-add_wellknowntype(empty)
-add_wellknowntype(field_mask)
-add_wellknowntype(source_context)
-add_wellknowntype(struct)
-add_wellknowntype(timestamp)
-add_wellknowntype(wrappers)
-
-add_wellknowntype(type)
-add_dependencies(type any source_context)
-add_wellknowntype(api)
-add_dependencies(api type source_context)
-
-
-target_compile_definitions(${TARGET} PRIVATE QT_BUILD_PROTOBUF_WELLKNOWNTYPES_LIB PUBLIC QT_PROTOBUF_VERSION_MAJOR=${PROJECT_VERSION_MAJOR}
+target_compile_definitions(${TARGET} PRIVATE QT_BUILD_PROTOBUF_QTTYPES_LIB PUBLIC QT_PROTOBUF_VERSION_MAJOR=${PROJECT_VERSION_MAJOR}
     QT_PROTOBUF_VERSION_MINOR=${PROJECT_VERSION_MINOR})
 
 set_target_properties(${TARGET} PROPERTIES VERSION ${PROJECT_VERSION} PUBLIC_HEADER "${GENERATED_PUBLIC_HEADER}" OUTPUT_NAME ${TARGET}
-    PROTO_INCLUDES "-I\"${QT_PROTOBUF_SOURCE_DIR}/3rdparty/grpc/third_party/protobuf/src\"")
+    PROTO_INCLUDES "-I\"${CMAKE_CURRENT_SOURCE_DIR}\"")
 
 target_compile_features(${TARGET} PUBLIC cxx_std_14
     cxx_auto_type
